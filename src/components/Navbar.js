@@ -1,27 +1,24 @@
 import React from 'react';
-import {useNavigate} from "react-router-dom"
-
+import { useNavigate } from "react-router-dom";
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 
 const Navbar = () => {
-
     const navigate = useNavigate();
 
     return (
-        <nav className="navbar navbar-light bg-secondary px-4 ">
-            <p calssName="text-light">HELLO</p>
-            <div>
-                <button 
-                  class="btn btn-info mx-2"
-                  onClick={() => navigate("/signin")}>
-                    SingIn
-                </button>
-                <button
-                  class="btn btn-info mx-2"
-                  onClick={() => navigate("/signup")}>
-                    SingUp
-                </button>
-            </div>
-        </nav>
+        <AppBar position="static">
+            <Toolbar>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    HELLO
+                </Typography>
+                <Button color="inherit" onClick={() => navigate("/signin")}>
+                    SignIn
+                </Button>
+                <Button color="inherit" onClick={() => navigate("/signup")}>
+                    SignUp
+                </Button>
+            </Toolbar>
+        </AppBar>
     );
 };
 

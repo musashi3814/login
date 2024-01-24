@@ -1,15 +1,15 @@
-import React, {useContext} from 'react'
-//import {UserContext} from "../context/userContext"
+import React, { useContext } from 'react';
+import { Container, Typography } from '@mui/material';
+//import { UserContext } from "../context/userContext";
 
 export default function Home() {
-
-  //const {currentUser} = useContext(UserContext)
+  //const { currentUser } = useContext(UserContext);
 
   return (
-    <div className="container p-5">
-      <h1 className="display-3 text-primary text-bold">
+    <Container maxWidth="sm" sx={{ pt: 5 }}>
+      <Typography variant="h3" color="black" fontWeight="bold">
         Hi, Sign Up or Sign In
-      </h1>
-    </div>
-  )
+      </Typography>
+    </Container>
+  );
 }
