@@ -15,10 +15,13 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import {useNavigate} from "react-router-dom"
+import { auth } from "../firebase-config";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 function Copyright(props) {
   return (
@@ -42,6 +45,8 @@ export default function SignUp() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = React.useState(false);
+  const [Emailvalidation, setEmailValidation] = React.useState("");
+  const [Passwordvalidation, setPasswordValidation] = React.useState("");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -49,13 +54,43 @@ export default function SignUp() {
   };
   
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
+
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: email,
+      password: password,
     });
+
+    setEmailValidation("");
+    setPasswordValidation("");
+
+    if(password.length < 6) {  // auth/weak-password
+      setPasswordValidation("Password is 6 characters min")  
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, data.get('email'), data.get('password'));
+      console.log("create user success");
+      setEmailValidation("");
+      setPasswordValidation("");
+      navigate("/");
+    } 
+    catch (error) {
+      if(error.code === "auth/email-already-in-use") {
+        setEmailValidation("Email already in use");
+      }
+      else if(error.code === "auth/invalid-email") {
+        setEmailValidation("Invalid email");
+      }
+      else {
+        setEmailValidation("Error");
+      }
+    }
   };
 
   return (
@@ -107,6 +142,8 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  helperText={Emailvalidation}
+                  error={Emailvalidation !== ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -115,8 +152,9 @@ export default function SignUp() {
                   id="password"
                   required 
                   fullWidth
+                  error={Passwordvalidation !== ""}
                 >
-                  <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                  <InputLabel htmlFor="outlined-adornment-password" helperText={Passwordvalidation}>Password</InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-password"
                     type={showPassword ? 'text' : 'password'}
@@ -136,6 +174,7 @@ export default function SignUp() {
                     name="password"
                     autoComplete="current-password"
                   />
+                  <FormHelperText>{Passwordvalidation}</FormHelperText>
                 </FormControl>
               </Grid>
             </Grid>

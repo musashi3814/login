@@ -19,6 +19,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from "react-router-dom"
+import {auth} from "../firebase-config"
 
 
 function Copyright(props) {
@@ -56,6 +57,7 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     });
+    
   };
 
   return (
