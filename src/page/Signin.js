@@ -16,10 +16,12 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import FormHelperText from '@mui/material/FormHelperText';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from "react-router-dom"
 import {auth} from "../firebase-config"
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 
 function Copyright(props) {
@@ -44,20 +46,60 @@ export default function SignIn() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = React.useState(false);
+  const [Emailvalidation, setEmailValidation] = React.useState("");
+  const [Passwordvalidation, setPasswordValidation] = React.useState("");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
+
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: email,
+      password: password,
     });
-    
+
+    setEmailValidation("");
+    setPasswordValidation("");
+
+    if(password.length < 6) {  // auth/weak-password
+      setPasswordValidation("Password is 6 characters min");  
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, data.get('email'), data.get('password'));
+      console.log("signin success");
+      setEmailValidation("");
+      setPasswordValidation("");
+      navigate("/Mypage");
+    } 
+    catch (error) {
+      console.log(error.code);
+      switch (error.code) {
+        case "auth/invalid-email":
+          setEmailValidation("Invalid Email");
+          break;
+        case "auth/user-disabled":
+          setEmailValidation("User Disabled");
+          break;
+        case "auth/user-not-found":
+          setEmailValidation("User Not Found");
+          break;
+        case "auth/wrong-password":
+          setPasswordValidation("Wrong Password");
+          break;
+        default:
+          setEmailValidation("Error");
+          break;
+      }
+    }
   };
 
   return (
@@ -88,6 +130,8 @@ export default function SignIn() {
               name="email"
               autoComplete="email"
               autoFocus
+              helperText={Emailvalidation}
+              error={Emailvalidation !== ""}
             />
             <FormControl
               variant="outlined"
@@ -95,6 +139,7 @@ export default function SignIn() {
               id="password"
               required 
               fullWidth
+              error={Passwordvalidation !== ""}
             >
               <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
               <OutlinedInput
@@ -116,6 +161,7 @@ export default function SignIn() {
                 name="password"
                 autoComplete="current-password"
               />
+              <FormHelperText>{Passwordvalidation}</FormHelperText>
             </FormControl>
             <Button
               type="submit"

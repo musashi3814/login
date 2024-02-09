@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { Container, Typography } from '@mui/material';
-//import { UserContext } from "../context/userContext";
+import { UserContext } from "../context/userContext";
 
 export default function Home() {
-  //const { currentUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   return (
     <Container maxWidth="sm" sx={{ pt: 5 }}>

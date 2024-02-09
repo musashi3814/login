@@ -69,7 +69,7 @@ export default function SignUp() {
     setPasswordValidation("");
 
     if(password.length < 6) {  // auth/weak-password
-      setPasswordValidation("Password is 6 characters min")  
+      setPasswordValidation("Password is 6 characters min");  
       return;
     }
 
@@ -78,7 +78,7 @@ export default function SignUp() {
       console.log("create user success");
       setEmailValidation("");
       setPasswordValidation("");
-      navigate("/");
+      navigate("/Mypage");
     } 
     catch (error) {
       if(error.code === "auth/email-already-in-use") {
