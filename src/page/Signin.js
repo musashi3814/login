@@ -19,8 +19,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import FormHelperText from '@mui/material/FormHelperText';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {useNavigate} from "react-router-dom"
-import {auth} from "../firebase-config"
+import { useNavigate } from "react-router-dom"
+import { auth } from "../firebase-config"
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 
@@ -60,6 +60,12 @@ export default function SignIn() {
     const email = data.get('email');
     const password = data.get('password');
 
+    // 続行する前にemailとpasswordがnullまたはundefinedでないことを確認
+    if (!email || !password) {
+      console.error("メールまたはパスワードが不足しています");
+      return;
+    }
+
     console.log({
       email: email,
       password: password,
@@ -81,8 +87,8 @@ export default function SignIn() {
       navigate("/Mypage");
     } 
     catch (error) {
-      console.log(error.code);
-      switch (error.code) {
+      
+      /* switch (error.code) {
         case "auth/invalid-email":
           setEmailValidation("Invalid Email");
           break;
@@ -98,7 +104,8 @@ export default function SignIn() {
         default:
           setEmailValidation("Error");
           break;
-      }
+      } */
+      setPasswordValidation("Email or Password incorrect");
     }
   };
 
@@ -131,7 +138,7 @@ export default function SignIn() {
               autoComplete="email"
               autoFocus
               helperText={Emailvalidation}
-              error={Emailvalidation !== ""}
+              error={Passwordvalidation !== ""}
             />
             <FormControl
               variant="outlined"

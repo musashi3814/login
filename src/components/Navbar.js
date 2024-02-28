@@ -1,9 +1,24 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/userContext";
+import { useContext } from 'react';
+import { auth } from '../firebase-config';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 
 const Navbar = () => {
+
+    const { user } = useContext(UserContext);
     const navigate = useNavigate();
+
+    const SignOut = async() => {
+        try {
+          await auth.signOut();
+          navigate("/");
+          console.log("signout success");
+        } catch (error) {
+          console.log("signout error");
+        }
+      }
 
     return (
         <AppBar position="static">
@@ -11,12 +26,20 @@ const Navbar = () => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     HELLO
                 </Typography>
-                <Button color="inherit" onClick={() => navigate("/signin")}>
+                {user ? (
+                    <Button color="inherit" onClick={SignOut}>
+                        SignOut
+                    </Button>
+                ):(
+                <>
+                  <Button color="inherit" onClick={() => navigate("/signin")}>
                     SignIn
-                </Button>
-                <Button color="inherit" onClick={() => navigate("/signup")}>
+                  </Button>
+                  <Button color="inherit" onClick={() => navigate("/signup")}>
                     SignUp
-                </Button>
+                  </Button>
+                </>
+            )}
             </Toolbar>
         </AppBar>
     );
